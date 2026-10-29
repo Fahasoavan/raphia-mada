@@ -52,7 +52,7 @@ export default function ContactView() {
             </div>
             <div>
               <dt className="eyebrow !mb-1">{t.contactPage.phone}</dt>
-              <dd className="text-ink/80">+261 34 43 334 43</dd>
+              <dd className="text-ink/80">+261 38 11 829 68</dd>
             </div>
             <div>
               <dt className="eyebrow !mb-1">{t.contactPage.address}</dt>
@@ -64,7 +64,7 @@ export default function ContactView() {
             </div>
           </dl>
           <a
-            href="https://wa.me/261344333443?text=Bonjour%20Raphia%20Mada%2C%20je%20souhaite%20des%20informations%20sur%20vos%20produits."
+            href="https://wa.me/261381182968?text=Bonjour%20Raphia%20Mada%2C%20je%20souhaite%20des%20informations%20sur%20vos%20produits."
             target="_blank"
             rel="noopener noreferrer"
             className="btn-primary w-full !bg-[#25D366] !text-ink hover:!bg-[#20bd5a]"

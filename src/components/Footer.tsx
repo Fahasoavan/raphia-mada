@@ -34,8 +34,8 @@ export default function Footer() {
           <ul className="space-y-2 text-sm text-cream/85">
             <li><a href="mailto:zoanjarafahasoavana@gmail.com" className="hover:text-ocre">zoanjarafahasoavana@gmail.com</a></li>
             <li>
-              <a href="https://wa.me/261344333443" target="_blank" rel="noopener noreferrer" className="hover:text-ocre">
-                +261 34 43 334 43 (WhatsApp)
+              <a href="https://wa.me/261381182968" target="_blank" rel="noopener noreferrer" className="hover:text-ocre">
+                +261 38 11 829 68 (WhatsApp)
               </a>
             </li>
             <li>Antananarivo, Madagascar</li>
