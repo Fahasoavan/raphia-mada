@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-cream text-ink antialiased;
+}
+
+/* Skip to content (accessibility) */
+.skip-link {
+  @apply sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-ocre focus:text-ink focus:px-4 focus:py-2 focus:top-2 focus:left-2 focus:rounded;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-forest px-6 py-3 font-medium text-cream transition-all duration-300 hover:bg-forest-dark hover:shadow-lg hover:shadow-forest/30 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-ocre focus-visible:ring-offset-2 disabled:opacity-50;
+  }
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-ocre px-6 py-3 font-medium text-ink transition-all duration-300 hover:bg-ocre-dark hover:shadow-lg hover:shadow-ocre/40 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-forest focus-visible:ring-offset-2 disabled:opacity-50;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-raphia bg-transparent px-6 py-3 font-medium text-raphia transition-all duration-300 hover:bg-raphia hover:text-cream active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-ocre focus-visible:ring-offset-2 disabled:opacity-50;
+  }
+  .card {
+    @apply rounded-2xl border border-raphia/20 bg-white shadow-sm transition-all duration-300;
+  }
+  .input {
+    @apply w-full rounded-lg border border-raphia/40 bg-white px-3 py-2 text-sm text-ink placeholder:text-ink/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ocre focus:border-ocre;
+  }
+  .label {
+    @apply mb-1 block text-sm font-medium text-forest;
+  }
+  .section-title {
+    @apply font-serif text-3xl sm:text-4xl text-forest;
+  }
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-ocre;
+  }
+}
+
+/* ---------- Animations ---------- */
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+
+@keyframes badge-pop {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.45); }
+  100% { transform: scale(1); }
+}
+
+@keyframes click-dot {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(16); opacity: 0; }
+}
+
+@keyframes snore {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(3px); }
+}
+@keyframes table-row {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Éléments en cascade (récapitulatif, listes) */
+.fade-up-item {
+  animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Apparition au scroll (IntersectionObserver) */.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Transition de page entière */
+.page-in {
+  animation: page-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Survol : les cartes « se soulèvent » */
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 30px -12px rgba(138, 90, 43, 0.28);
+}
+.card-hover:focus-within {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 30px -12px rgba(138, 90, 43, 0.28);
+}
+
+/* Badge du panier : petit rebond quand le compteur change */
+.badge-pop {
+  animation: badge-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Lignes du tableau admin */.anim-table tbody tr {
+  animation: table-row 0.4s ease both;
+}
+.anim-table tbody tr:nth-child(2) { animation-delay: 40ms; }
+.anim-table tbody tr:nth-child(3) { animation-delay: 80ms; }
+.anim-table tbody tr:nth-child(4) { animation-delay: 120ms; }
+.anim-table tbody tr:nth-child(5) { animation-delay: 160ms; }
+.anim-table tbody tr:nth-child(6) { animation-delay: 200ms; }
+.anim-table tbody tr:nth-child(7) { animation-delay: 240ms; }
+.anim-table tbody tr:nth-child(8) { animation-delay: 280ms; }
+.anim-table tbody tr:nth-child(9) { animation-delay: 320ms; }
+
+/* Cartes flottantes (décor de l'hero) */
+.float-slow {
+  animation: float 7s ease-in-out infinite;
+}
+
+/* Micro-tremplin WhatsApp */
+.snore {
+  animation: snore 2.8s ease-in-out infinite;
+}
+
+/* Effet de clic circulaire sur les boutons principaux */
+.click-feedback {
+  position: relative;
+  overflow: hidden;
+}
+.click-feedback::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+.click-feedback:active::after {
+  animation: click-dot 0.55s ease-out;
+  opacity: 0.25;
+}
+
+/* Accessibilité : tout est instantané si l'utilisateur refuse les animations */
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .page-in, .badge-pop, .float-slow, .snore, .click-feedback::after, .anim-table tbody tr, .fade-up-item {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  html { scroll-behavior: auto; }
+}

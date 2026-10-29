@@ -1,0 +1,25 @@
+# dépendances
+/node_modules
+
+# build Next.js
+/.next
+/out
+
+# production local, logs, caches
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+/.eslintcache
+
+# données de démonstration (créées au premier POST)
+/data/quotes.json
+
+# système / éditeurs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# env
+.env*
