@@ -213,6 +213,7 @@ export const fr = {
     phone: "Téléphone / WhatsApp",
     address: "Adresse",
     whatsapp: "Discuter sur WhatsApp",
+    hoursLabel: "Horaires",
     hours: "Lundi — vendredi, 9 h — 18 h (heure de Madagascar)",
     formTitle: "Envoyez-nous un message",
     form: {
@@ -490,6 +491,7 @@ export const en: Dict = {
     phone: "Phone / WhatsApp",
     address: "Address",
     whatsapp: "Chat on WhatsApp",
+    hoursLabel: "Hours",
     hours: "Monday — Friday, 9 am — 6 pm (Madagascar time)",
     formTitle: "Send us a message",
     form: {

@@ -32,13 +32,13 @@ export default function Footer() {
         <div>
           <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-ocre">{t.footer.contact}</p>
           <ul className="space-y-2 text-sm text-cream/85">
-            <li>contact@raphia-mada.mg</li>
+            <li><a href="mailto:zoanjarafahasoavana@gmail.com" className="hover:text-ocre">zoanjarafahasoavana@gmail.com</a></li>
             <li>
-              <a href="https://wa.me/261340000000" target="_blank" rel="noopener noreferrer" className="hover:text-ocre">
-                +261 34 00 000 00 (WhatsApp)
+              <a href="https://wa.me/261344333443" target="_blank" rel="noopener noreferrer" className="hover:text-ocre">
+                +261 34 43 334 43 (WhatsApp)
               </a>
             </li>
-            <li>Lot II M 12 Bis, Antananarivo 101, Madagascar</li>
+            <li>Antananarivo, Madagascar</li>
           </ul>
         </div>
       </div>

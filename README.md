@@ -12,7 +12,7 @@
 
 🌐 **Interface du visiteur : FR / EN** (sélecteur dans l'en-tête, conservé en navigation)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FFahasoavan%2Fraphia-mada)
+🚀 **[Démo en ligne](https://raphia-mada.vercel.app)** — <https://raphia-mada.vercel.app>
 
 *Pas de vente en ligne : le parcours clé est le dépôt d'une **demande de devis** (panier de devis → formulaire → enregistrement en base → dashboard admin).*
 
@@ -34,14 +34,17 @@ npm run dev                  # → http://localhost:3000
 | `npm run build` | Build production (Turbopack + type-check strict) |
 | `npm start` | Servir le build production |
 
-## 🚀 Déploiement (Vercel)
+## 🚀 Déploiement (pour vos propres copies du repo)
 
-1. Cliquez sur le bouton **Deploy with Vercel** ci-dessus (ou importez le repo manuellement).
-2. Dans **Variables d'environnement**, définissez (voir `.env.example`) :
-   - `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` — requises ! (sans elles, le stockage retombe en `data/quotes.json`, non persistant)
-   - `ADMIN_PASSWORD` — protège `/admin` par mot de passe ; **non défini = mode démo public à données fictives**
-   - `QUOTE_RETENTION_DAYS` — purge des demandes anciennes (défaut : 30)
-3. Déployez : `npm audit` → **0 vulnérabilité** au moment du dernier build.
+Le site original est déjà déployé : **[raphia-mada.vercel.app](https://raphia-mada.vercel.app)** (Vercel + Upstash Redis).
+
+Pour déployer votre copie : importez le repo sur [vercel.com/new](https://vercel.com/new), puis dans **Variables d'environnement** définissez (voir `.env.example`) :
+
+- `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` — requises ! (sans elles, le stockage retombe en `data/quotes.json`, non persistant)
+- `ADMIN_PASSWORD` — protège `/admin` par mot de passe ; **non défini = mode démo public à données fictives**
+- `QUOTE_RETENTION_DAYS` — purge des demandes anciennes (défaut : 30)
+
+Vérification avant mise en ligne : `npm audit` → **0 vulnérabilité** au moment du dernier build.
 
 **Pourquoi Upstash ?** Le filesystem Vercel est éphémère : le stockage fichier (V1 du projet, conservé en fallback dev) est remplacé par Redis via son API REST — persistant, atomique, et gratuit à cette échelle. Détail du raisonnement dans [`CHOIX-TECHNIQUES.md`](./CHOIX-TECHNIQUES.md).
 

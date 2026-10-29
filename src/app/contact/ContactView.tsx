@@ -47,24 +47,24 @@ export default function ContactView() {
           <dl className="card space-y-4 p-6 text-sm">
             <div>
               <dt className="eyebrow !mb-1">{t.contactPage.email}</dt>              <dd>
-                <a href="mailto:contact@raphia-mada.mg" className="font-medium text-raphia hover:underline">contact@raphia-mada.mg</a>
+                <a href="mailto:zoanjarafahasoavana@gmail.com" className="font-medium text-raphia hover:underline">zoanjarafahasoavana@gmail.com</a>
               </dd>
             </div>
             <div>
               <dt className="eyebrow !mb-1">{t.contactPage.phone}</dt>
-              <dd className="text-ink/80">+261 34 00 000 00</dd>
+              <dd className="text-ink/80">+261 34 43 334 43</dd>
             </div>
             <div>
               <dt className="eyebrow !mb-1">{t.contactPage.address}</dt>
-              <dd className="text-ink/80">Lot II M 12 Bis, Antananarivo 101, Madagascar</dd>
+              <dd className="text-ink/80">Antananarivo, Madagascar</dd>
             </div>
             <div>
-              <dt className="eyebrow !mb-1">{t.contactPage.hours}</dt>
+              <dt className="eyebrow !mb-1">{t.contactPage.hoursLabel}</dt>
               <dd className="text-ink/80">{t.contactPage.hours}</dd>
             </div>
           </dl>
           <a
-            href="https://wa.me/261340000000?text=Bonjour%20Raphia%20Mada%2C%20je%20souhaite%20des%20informations%20sur%20vos%20produits."
+            href="https://wa.me/261344333443?text=Bonjour%20Raphia%20Mada%2C%20je%20souhaite%20des%20informations%20sur%20vos%20produits."
             target="_blank"
             rel="noopener noreferrer"
             className="btn-primary w-full !bg-[#25D366] !text-ink hover:!bg-[#20bd5a]"
