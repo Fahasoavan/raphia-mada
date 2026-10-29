@@ -8,6 +8,7 @@ import { getProduct, Product } from "@/data/products";
 import ProductVisual from "@/components/ProductVisual";
 import Reveal from "@/components/Reveal";
 import DemoNotice from "@/components/DemoNotice";
+import { formatNumber } from "@/lib/format";
 
 interface Confirmed {
   reference: string;
@@ -202,7 +203,7 @@ export default function QuotePageView() {
                   <div className="min-w-0 flex-1">
                     <p className="font-serif font-bold text-forest">{product.name[lang]}</p>
                     <p className="text-xs text-ink/60">
-                      {t.productsPage.from} {unit.toFixed(2).replace(".", lang === "fr" ? "," : ".")} {t.productsPage.perPiece} · MOQ {product.moq}
+                      {t.productsPage.from} {formatNumber(unit, lang)} {t.productsPage.perPiece} · MOQ {product.moq}
                     </p>
                     {belowMoq && <p className="mt-1 text-xs font-medium text-ocre-dark">⚠ {t.quotePage.moqShort.replace("{min}", String(product.moq))}</p>}
                   </div>
@@ -238,7 +239,7 @@ export default function QuotePageView() {
               <p className="text-xs text-cream/50">{totalQty} {t.productsPage.pieces}</p>
             </div>
             <p className="font-serif text-2xl font-bold">
-              ≈ {estimate.toFixed(2).replace(".", lang === "fr" ? "," : ".")} €
+              ≈ {formatNumber(estimate, lang)} €
             </p>
           </div>
           <p className="mt-2 text-xs text-ink/50">{t.productDetail.priceNote}</p>

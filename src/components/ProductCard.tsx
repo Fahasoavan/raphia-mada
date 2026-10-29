@@ -6,6 +6,7 @@ import { Product } from "@/data/products";
 import { useI18n } from "@/lib/i18n";
 import { useCart } from "@/lib/cart";
 import ProductVisual from "./ProductVisual";
+import { formatNumber } from "@/lib/format";
 
 export default function ProductCard({ product }: { product: Product }) {
   const { t, lang } = useI18n();
@@ -42,7 +43,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <div className="flex items-center gap-1">
             <dt className="font-semibold text-forest">{t.productsPage.from} :</dt>
             <dd>
-              {product.tiers[0].price.toFixed(2)} {t.productsPage.perPiece}
+              {formatNumber(product.tiers[0].price, lang)} {t.productsPage.perPiece}
             </dd>
           </div>
         </dl>

@@ -21,7 +21,7 @@ export const fr = {
   // Hero
   hero: {
     kicker: "Atelier d'artisanat · Export Europe & USA",
-    title: "Le raffia malgache, tissé à la main pour vos boutiques et vos hôtels",
+    title: "Le raphia malgache, tissé à la main pour vos boutiques et vos hôtels",
     subtitle:
       "Paniers, sacs, chapeaux, tapis et sets de table faits main dans notre atelier de Madagascar. Vente en gros sur devis, MOQ accessibles, export traité de A à Z.",
     cta: "Demander un devis",
@@ -186,7 +186,7 @@ export const fr = {
     },
     story: {
       heading: "Une filière de confiance, du village à la boutique",
-      p1: "Raphia Mada est né d'une conviction : le raffia malgache, tressé à la main selon des savoir-faire centenaires, peut rivaliser avec les plus beaux matériaux de la décoration mondiale — à condition de garantir des conditions de travail dignes et une qualité constante.",
+      p1: "Raphia Mada est né d'une conviction : le raphia malgache, tressé à la main selon des savoir-faire centenaires, peut rivaliser avec les plus beaux matériaux de la décoration mondiale — à condition de garantir des conditions de travail dignes et une qualité constante.",
       p2: "Depuis notre atelier d'Antananarivo et nos collectes auprès de familles de tisserands des Hauts Plateaux, nous produisons des paniers, sacs, chapeaux, tapis et sets de table pour des détaillants, hôtels et distributeurs en Europe et aux États-Unis. Chaque commande est suivie, chaque lot est contrôlé, chaque artisan est rémunéré au-delà du salaire médian régional.",
     },
     values: {
@@ -197,7 +197,7 @@ export const fr = {
     },
     process: {
       heading: "Nos étapes de fabrication",
-      s1: { title: "Récolte & séchage", text: "Le raffia est récolté, séché et trié selon un grade A/B/C au sein du village producteur." },
+      s1: { title: "Récolte & séchage", text: "Le raphia est récolté, séché et trié selon un grade A/B/C au sein du village producteur." },
       s2: { title: "Tressage", text: "Nos tisserands et teinturières s'enchaînent le tressage traditionnel, à plat ou en spirale, à la main." },
       s3: { title: "Teinture", text: "Teintures végétales ou à faible impact, avec des séries-test résistantes à la lumière." },
       s4: { title: "Finition & contrôle", text: "Bords cousus, doublures ou anses posés, puis contrôle qualité par lot avant mise en carton." },
@@ -257,6 +257,7 @@ export const fr = {
     logout: "Se déconnecter",
   },
   demoNote: "Mode démo public : le jeu de données affiché est 100 % fictif. Les demandes réelles ne sont jamais exposées sans mot de passe.",
+  realDataNote: "Session admin active : les demandes affichées sont réelles (protégées par mot de passe).",
   demoBanner: "Site de démonstration — n'entrez pas de vraies données personnelles dans les formulaires.",
   back: "Retour au site",
     dashboard: {
@@ -282,7 +283,8 @@ export const fr = {
 
   // Misc
   footer: {
-    tagline: "Artisanat malgache en raffia, exporté avec soin.",
+    tagline: "Artisanat malgache en raphia, exporté avec soin.",
+    demoNotice: "🪧 Site de démonstration (projet de portfolio) : la marque, les produits, les témoignages et les statistiques affichés sont fictifs ; seules les coordonnées de contact sont réelles. La demande de devis fonctionne réellement, les données sont purgées après 30 jours.",
     links: "Navigation",
     contact: "Contact",
     newsletter: "Recevez nos arrivées de saison",
@@ -295,9 +297,9 @@ export type Dict = typeof fr;
 
 export const en: Dict = {
   siteName: "Raphia Mada",
-  siteTagline: "Malagasy raffia craft, wholesale export",
+  siteTagline: "Malagasy raphia craft, wholesale export",
   defaultDescription:
-    "Malagasy raffia craft workshop: baskets, bags, hats, rugs and placemats, sold wholesale for export to Europe and the USA. Request your quote.",
+    "Malagasy raphia craft workshop: baskets, bags, hats, rugs and placemats, sold wholesale for export to Europe and the USA. Request your quote.",
 
   nav: {
     home: "Home",
@@ -311,7 +313,7 @@ export const en: Dict = {
 
   hero: {
     kicker: "Craft workshop · Export Europe & USA",
-    title: "Malagasy raffia, hand-woven for your boutiques and hotels",
+    title: "Malagasy raphia, hand-woven for your boutiques and hotels",
     subtitle:
       "Baskets, bags, hats, rugs and placemats handmade in our Madagascar workshop. Wholesale on quote, accessible MOQs, export handled from A to Z.",
     cta: "Request a quote",
@@ -465,7 +467,7 @@ export const en: Dict = {
     },
     story: {
       heading: "A trusted supply chain, from village to boutique",
-      p1: "Raphia Mada was born from a conviction: Malagasy raffia, hand-woven using century-old know-how, can rival the finest materials in world décor — provided that dignified working conditions and consistent quality are guaranteed.",
+      p1: "Raphia Mada was born from a conviction: Malagasy raphia, hand-woven using century-old know-how, can rival the finest materials in world décor — provided that dignified working conditions and consistent quality are guaranteed.",
       p2: "From our Antananarivo workshop and our collections from weaver families of the Highlands, we produce baskets, bags, hats, rugs and placemats for retailers, hotels and distributors across Europe and the United States. Every order is tracked, every batch is inspected, every artisan is paid above the regional median wage.",
     },
     values: {
@@ -534,6 +536,7 @@ export const en: Dict = {
     logout: "Log out",
   },
   demoNote: "Public demo mode: the displayed dataset is 100% fictitious. Real requests are never exposed without a password.",
+  realDataNote: "Admin session active: the requests shown are real (password protected).",
   demoBanner: "Demo site — please do not enter real personal data in the forms.",
   back: "Back to site",
     dashboard: {
@@ -557,7 +560,8 @@ export const en: Dict = {
   cartBadge: "Number of items in the quote request",
 
   footer: {
-    tagline: "Malagasy raffia craft, exported with care.",
+    tagline: "Malagasy raphia craft, exported with care.",
+    demoNotice: "🪧 Demo site (portfolio project): the brand, products, testimonials and statistics shown are fictional; only the contact details are real. The quote flow works for real, data is purged after 30 days.",
     links: "Navigation",
     contact: "Contact",
     newsletter: "Get our seasonal arrivals",

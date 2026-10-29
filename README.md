@@ -128,9 +128,10 @@ Transitions de page (`template.tsx`), apparitions au scroll (`IntersectionObserv
 
 ## ⚠️ Mentions démo
 
-- Coordonnées, produits, témoignages et sociétés **fictifs**
-- Bandeau « n'entrez pas de vraies données » sur les formulaires + purge automatique à 30 jours
-- `/admin` est protégé par mot de passe **si configuré** — sinon mode démo (données fictives) : non exposées de données réelles en public
+- Produits, témoignages, sociétés clientes et statistiques du dashboard : **fictifs** (projet de portfolio)
+- **Coordonnées de contact : réelles** (celles de l'auteur) — en production pour un vrai atelier, utiliser une adresse e-mail et un numéro dédiés pour se prémunir du spam
+- Bandeau démo affiché pied de page + formulaires, et purge automatique des demandes à 30 jours
+- `/admin` est protégé par mot de passe **si configuré** — sinon mode démo (données 100 % fictives) : aucune donnée réelle n'est jamais exposée au public
 
 ## 👤 Auteur
 

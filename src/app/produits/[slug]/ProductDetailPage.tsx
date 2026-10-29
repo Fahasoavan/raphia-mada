@@ -6,6 +6,7 @@ import { getProduct } from "@/data/products";
 import ProductVisual from "@/components/ProductVisual";
 import AddToQuoteButton from "@/components/AddToQuoteButton";
 import Reveal from "@/components/Reveal";
+import { formatNumber } from "@/lib/format";
 
 export default function ProductDetailPage({ slug }: { slug: string }) {
   const { t, lang } = useI18n();
@@ -76,7 +77,7 @@ export default function ProductDetailPage({ slug }: { slug: string }) {
                     {tier.qty.toLocaleString(lang === "fr" ? "fr-FR" : "en-US")} {t.productsPage.pieces}
                   </td>
                   <td className="py-2 text-ink/80">
-                    {tier.price.toFixed(2).replace(".", lang === "fr" ? "," : ".")} {t.productsPage.perPiece}
+                    {formatNumber(tier.price, lang)} {t.productsPage.perPiece}
                   </td>
                 </tr>
               ))}

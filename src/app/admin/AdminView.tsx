@@ -111,9 +111,16 @@ export default function AdminView() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <div role="note" className="rounded-xl bg-ocre/20 px-4 py-3 text-sm font-medium text-ink">
-        ⚠ {t.admin.banner}
-      </div>
+      {state === "demo" && (
+        <div role="note" className="rounded-xl bg-ocre/20 px-4 py-3 text-sm font-medium text-ink">
+          ⚠ {t.admin.banner}
+        </div>
+      )}
+      {state === "ready" && (
+        <div role="note" className="rounded-xl bg-forest/10 px-4 py-3 text-sm font-medium text-forest">
+          🔓 {t.admin.realDataNote} <span className="text-ink/50">({source === "redis" ? "Upstash Redis" : "JSON local"})</span>
+        </div>
+      )}
 
       <div className="mt-6 flex items-center justify-between gap-4">
         <h1 className="section-title">{t.admin.title}</h1>
