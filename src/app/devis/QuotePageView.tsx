@@ -7,6 +7,7 @@ import { useCart, CartItem } from "@/lib/cart";
 import { getProduct, Product } from "@/data/products";
 import ProductVisual from "@/components/ProductVisual";
 import Reveal from "@/components/Reveal";
+import DemoNotice from "@/components/DemoNotice";
 
 interface Confirmed {
   reference: string;
@@ -113,7 +114,8 @@ export default function QuotePageView() {
   if (confirmed) {
     return (
       <section className="mx-auto max-w-3xl px-4 py-14 sm:px-6">
-        <div className="page-in card p-8 text-center sm:p-10">
+        <DemoNotice />
+        <div className="page-in card mt-4 p-8 text-center sm:p-10">
           <div className="badge-pop mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-forest text-cream text-2xl" aria-hidden="true">✓</div>
           <h1 className="mt-5 font-serif text-2xl font-bold text-forest sm:text-3xl">{t.quotePage.confirm.title}</h1>
           <p className="mt-2 text-ink/75">{t.quotePage.confirm.text}</p>
@@ -164,8 +166,9 @@ export default function QuotePageView() {
   // Panier vide
   if (items.length === 0) {
     return (
-      <section className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6">
-        <div aria-hidden="true" className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-raphia/10 text-3xl">🧺</div>
+      <section className="mx-auto max-w-3xl px-4 py-14 text-center sm:px-6">
+        <DemoNotice />
+        <div aria-hidden="true" className="mx-auto mt-4 flex h-16 w-16 items-center justify-center rounded-full bg-raphia/10 text-3xl">🧺</div>
         <h1 className="mt-5 font-serif text-3xl font-bold text-forest">{t.quotePage.empty.title}</h1>
         <p className="mt-2 text-ink/70">{t.quotePage.empty.text}</p>
         <Link href="/produits" className="btn-primary mt-8">{t.quotePage.empty.button}</Link>
@@ -175,7 +178,8 @@ export default function QuotePageView() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <h1 className="section-title">{t.quotePage.title}</h1>
+      <DemoNotice />
+      <h1 className="section-title mt-4">{t.quotePage.title}</h1>
       <p className="mt-2 max-w-2xl text-ink/70">{t.quotePage.subtitle}</p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_1fr]">

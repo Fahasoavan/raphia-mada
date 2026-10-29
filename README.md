@@ -1,144 +1,134 @@
-# 🧺 Raphia Mada — Site vitrine & demandes de devis
+<div align="center">
 
-Site web complet pour **Raphia Mada**, un atelier malgache d'artisanat en raphia (paniers, sacs, chapeaux, tapis, sets de table) qui vend **en gros** à des boutiques, hôtels et distributeurs en Europe et aux États-Unis.
+# 🧺 Raphia Mada
 
-> ❌ **Pas de vente en ligne** : l'objectif du site est de collecter des **demandes de devis** (panier de devis → formulaire → enregistrement + tableau de bord admin).
+**Site vitrine + collecte de devis d'un atelier d'artisanat en raphia à Madagascar, à destination des acheteurs B2B (boutiques, hôtels, distributeurs — Europe & USA).**
+
+![Next.js](https://img.shields.io/badge/Next.js-16.4.3-000000?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-38BDF8?logo=tailwindcss)
+![npm audit](https://img.shields.io/badge/npm_audit-0_vulnerabilities-4C1)
+![License](https://img.shields.io/badge/License-MIT-8A5A2B)
+
+🌐 **Interface du visiteur : FR / EN** (sélecteur dans l'en-tête, conservé en navigation)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FFahasoavan%2Fraphia-mada)
+
+*Pas de vente en ligne : le parcours clé est le dépôt d'une **demande de devis** (panier de devis → formulaire → enregistrement en base → dashboard admin).*
+
+</div>
 
 ---
 
-## ⚡ Démarrage
+## ⚡ Démarrage local
 
 ```bash
+cp .env.example .env.local   # facultatif : tout marche sans
 npm install
-npm run dev      # http://localhost:3000
+npm run dev                  # → http://localhost:3000
 ```
 
 | Commande | Rôle |
 |---|---|
-| `npm run dev` | Serveur de développement sur le port **3000** |
-| `npm run build` | Build de production (type-check + génération statique) |
-| `npm start` | Serve le build de production sur le port 3000 |
+| `npm run dev` | Développement, port 3000 |
+| `npm run build` | Build production (Turbopack + type-check strict) |
+| `npm start` | Servir le build production |
 
----
+## 🚀 Déploiement (Vercel)
 
-## 🧱 Stack technique
+1. Cliquez sur le bouton **Deploy with Vercel** ci-dessus (ou importez le repo manuellement).
+2. Dans **Variables d'environnement**, définissez (voir `.env.example`) :
+   - `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` — requises ! (sans elles, le stockage retombe en `data/quotes.json`, non persistant)
+   - `ADMIN_PASSWORD` — protège `/admin` par mot de passe ; **non défini = mode démo public à données fictives**
+   - `QUOTE_RETENTION_DAYS` — purge des demandes anciennes (défaut : 30)
+3. Déployez : `npm audit` → **0 vulnérabilité** au moment du dernier build.
+
+**Pourquoi Upstash ?** Le filesystem Vercel est éphémère : le stockage fichier (V1 du projet, conservé en fallback dev) est remplacé par Redis via son API REST — persistant, atomique, et gratuit à cette échelle. Détail du raisonnement dans [`CHOIX-TECHNIQUES.md`](./CHOIX-TECHNIQUES.md).
+
+## 🏗️ Stack
 
 | Élément | Choix |
 |---|---|
-| Framework | **Next.js 14** (App Router) + React 18 |
-| Langage | **TypeScript** strict |
-| Style | **Tailwind CSS 3** (palette personnalisée) |
-| Polices | `next/font` intégré (Playfair Display + Inter via Google Fonts) |
-| Données produits | Fichier statique `src/data/products.ts` |
-| Stockage des devis | `data/quotes.json` (créé automatiquement) — **aucune base de données, aucune API externe** |
-| Images | Zéro image distante : visuels **100 % SVG** (dégradés + motifs de tressage par catégorie) |
-
-## 🎨 Design
-
-- **Palette** : crème `#FAF5EA` · brun raphia `#8A5A2B` · vert profond `#2F4A3A` · ocre `#D9A441`
-- **Typographie** : Playfair Display (serif, titres) + Inter (sans-serif, texte)
-- Mobile-first, deux langues, identique sur tous les écrans
-
-## 🌐 Langues
-
-Sélecteur **FR / EN** dans l'en-tête. Dictionnaire maison `src/lib/translations.ts` (aucune lib i18n) ; la langue est conservée en `localStorage` (`raphia-mada-lang`) pendant toute la navigation.
-
----
+| Framework | **Next.js 16.4.3** (App Router, Turbopack) + **React 19** |
+| Langage | TypeScript strict |
+| Style | Tailwind CSS 3 — palette crème `#FAF5EA`, raphia `#8A5A2B`, vert `#2F4A3A`, ocre `#D9A441` |
+| Polices | `next/font` (Playfair Display + Inter) |
+| Données produits | `src/data/products.ts` — 8 produits fictifs FR/EN (MOQ, 3 paliers de prix dégressifs) |
+| Stockage devis | **Upstash Redis** (prod) / `data/quotes.json` (dev, fallback auto) |
+| i18n | Dictionnaire typé maison + Context + localStorage (2 langues) |
+| Visuels | **0 image distante** : SVG générés (dégradés + motif de tressage par catégorie) |
+| Persistance ignorée | `data/quotes.json` (gitignore, recréé au 1er POST) |
 
 ## 📄 Pages
 
-| Page | Route | Contenu |
+| Page | Route | Points clés |
 |---|---|---|
-| Accueil | `/` | Bandeau d'accroche, 3 arguments (fait main / traçabilité / export), 4 best-sellers, « Comment ça marche » en 4 étapes, 3 témoignages, CTA devis |
-| Catalogue | `/produits` | Grille de 8 produits, **filtres par catégorie**, MOQ + prix d'appel sur chaque carte, bouton « Ajouter à ma demande de devis » |
-| Fiche produit | `/produits/[slug]` | Description complète, dimensions, matières, MOQ, délai de production, **prix dégressifs par palier** (ex. 50 / 200 / 500 pièces), ajout au devis |
-| Ma demande de devis | `/devis` | Panier (quantités modifiables, suppression, alerte MOQ, estimation indicative) + formulaire validé + **page de confirmation avec référence** (ex. `DEV-2026-0001`) |
-| À propos | `/a-propos` | Histoire de l'atelier (fondé en 2016 à Antananarivo), valeurs, 5 étapes de fabrication |
-| Contact | `/contact` | Coordonnées fictives, bouton WhatsApp (`wa.me` +261 34 00 000 00), formulaire simple (simulation offline) |
-| Admin (démo) | `/admin` | **Dashboard** (KPIs animés + graphiques) et tableau de toutes les demandes. **Sans mot de passe — bandeau démo affiché** |
+| Accueil | `/` | Accroche, arguments (fait main / traçabilité / export), best-sellers, 4 étapes « comment ça marche », témoignages |
+| Catalogue | `/produits` | 8 produits, filtres par catégorie, MOQ affichée, bouton « ajouter à ma demande de devis » |
+| Fiche produit | `/produits/[slug]` | Dimensions, matières, MOQ, délai, prix dégressifs 50/200/500, authentification depuis URL dynamique |
+| Ma demande de devis | `/devis` | Panier (localStorage) avec alerte MOQ, estimation indicative, formulaire validé client + serveur → confirmation avec référence `DEV-2026-0001` |
+| À propos | `/a-propos` | Histoire de l'atelier (2016, Antananarivo), valeurs, 5 étapes de fabrication |
+| Contact | `/contact` | Coordonnées fictives, WhatsApp `wa.me`, formulaire de démonstration |
+| Admin | `/admin` | **Dashboard** (KPIs + charts animés) + tableau des demandes ; protégé par mot de passe ou mode démo |
 
-## 🧩 Route API
+## 🔌 API
 
-Une seule route : `POST`/`GET` sur **`/api/quotes`** (`src/app/api/quotes/route.ts`).
-
-| Verbe | Réponse | Rôle |
+| Verbe | Route | Description |
 |---|---|---|
-| `GET /api/quotes` | `200 { quotes: [...] }` | Liste de toutes les demandes (utilisé par l'admin) |
-| `POST /api/quotes` | `201 { ok, reference, quote }` | Enregistre la demande dans `data/quotes.json` et génère la référence `DEV-<année>-<compteur sur 4 chiffres>` |
-| — | `400 { error: "validation", field, message }` | Validation serveur : nom, société, e-mail, pays, téléphone, items (slug inconnu, quantité ≤ 0, panier vide) |
-| — | `400 { error: "invalid-json" }` | Corps non JSON |
+| `POST` | `/api/quotes` | Dépôt public d'une demande → `201 { ok, reference, quote }` ; `400 { error:"validation", field }` sur champ invalide |
+| `GET` | `/api/quotes` | Données des demandes, **réservées à l'admin** : `401` avec cookie d'une session (POST `/api/admin/login` avec `ADMIN_PASSWORD`) ; sinon **données fictives** + flag `demo: true` (déploiement public sans mot de passe) |
+| `POST` | `/api/admin/login` | Session 12 h (cookie httpOnly) |
+| `POST` | `/api/admin/logout` | Fermeture de session |
 
 Corps attendu du POST :
 
 ```json
 {
-  "name": "...", "company": "...", "email": "...", "country": "...", "phone": "+33612345678",
+  "name": "…", "company": "…", "email": "…", "country": "…", "phone": "+33612345678",
   "targetDate": "facultatif", "message": "facultatif",
   "items": [{ "slug": "panier-ambositra", "qty": 200 }]
 }
 ```
 
-Le fichier `data/quotes.json` est créé automatiquement (dossier `data/` au `cwd` du serveur) ; sa lecture tolère un BOM UTF-8.
+## 🛠️ Dashboard admin
 
-## 🔬 Simulations possibles (QA)
+Calcul à la volée (`useMemo`) sur toutes les demandes, **graphiques SVG/CSS maison** (aucune librairie) :
 
-1. **Parcours complet** : `/produits` → filtres → fiche → « Ajouter » sur 2–3 produits → `/devis` → montée d'une quantité sous la MOQ (alerte ocre) → envoi → confirmation `DEV-…` → `/admin`.
-2. **Erreurs de validation** : chaque champ a son cas (nom trop court, e-mail invalide, téléphone invalide, slug inconnu, `qty: 0`, `items: []`, JSON cassé) — lecture du rôle `field`/`message` dans la réponse 400, ou à l'écran sous chaque champ.
-3. **Persistance du panier** : localStorage `raphia-mada-quote-cart` — survit à la navigation et à la fermeture ; suppressions/quantités synchronisent l'entête.
-4. **Admin live** : `/admin` **s'auto-rafraîchit toutes les 10 s** — envoyez un POST depuis un terminal et regardez le dashboard se mettre à jour.
-5. **Réinitialisation démo** : vider `data/quotes.json` en `[]` (ou supprimer le fichier).
-
-## 🛠️ Dashboard admin (/admin)
-
-Calculé à la volée côté client depuis toutes les demandes (`useMemo`), aucune librairie de charts (SVG/CSS pur) :
-
-- **5 KPIs** animés (compteur progressif) : demandes reçues, pièces demandées, valeur estimée (€, sur les prix unitaires), panier moyen, sociétés clientes distinctes
-- **Évolution des demandes par mois** : histogramme des 12 derniers mois, valeur exacte au survol
-- **Produits les plus demandés** (top 5), **demandes par pays** (top 6), **pièces par catégorie** — barres qui se déploient à l'apparition
-- Tout est traduit FR/EN ; le dashboard se place avant le tableau « Toutes les demandes »
+- **5 KPIs** animés : demandes reçues, pièces, valeur estimée (€), panier moyen, sociétés distinctes
+- **Évolution mensuelle** : histogramme 12 mois (valeur au survol)
+- **Top produits**, **répartition pays**, **répartition catégories** — barres déployées animées
+- Mise à jour automatique toutes les 10 s
 
 ## 🎬 Animations & accessibilité
 
-- Transitions de page (App Router `template.tsx`), apparitions au scroll (`IntersectionObserver`, `src/components/Reveal.tsx`), cascades de cartes, zoom visuel produits au survol, badge panier qui rebondit, onde de clic sur les boutons, barre de progression de lecture
-- **`prefers-reduced-motion: reduce`** : toutes les animations/instantané
-- Navigation clavier (skip-link, focus visibles), labels et `aria-*` sur les champs, contrastes vérifiés, état vide / chargement / erreur sur toutes les zones dynamiques
-- SEO : `title` / `description` par page (via `generateMetadata` pour les fiches produits), admin en `noindex`
+Transitions de page (`template.tsx`), apparitions au scroll (`IntersectionObserver`), cascades, zoom produits, badge panier animé, onde de clic sur les boutons, barre de progression de lecture — le tout **désactivé automatiquement** sur `prefers-reduced-motion: reduce`. Navigation clavier (skip-link), labels/`aria-*`, contrastes vérifiés, états vides/chargement/erreur partout, SEO par page.
 
-## 📁 Architecture du code
+## 📁 Architecture
 
 ```
-├── data/quotes.json               # demandes enregistrées (créé au premier POST)
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx             # providers langue + panier, Header/Footer, metadata
-│   │   ├── template.tsx           # transition de page
-│   │   ├── page.tsx / Products    # accueil
-│   │   ├── produits/              # catalogue (page.tsx + ProductsGrid.tsx) + [slug]
-│   │   ├── devis/                 # panier + formulaire + confirmation
-│   │   ├── a-propos/ contact/
-│   │   ├── admin/                 # AdminView (tableau) + Dashboard (KPIs & charts)
-│   │   └── api/quotes/route.ts    # GET / POST des devis
-│   ├── components/                # Header (compteur, FR/EN, barre de scroll), Footer,
-│   │                              # ProductCard, ProductVisual (SVG), Reveal, AddToQuoteButton
-│   ├── data/products.ts           # 8 produits fictifs (FR/EN, MOQ, paliers de prix…)
-│   └── lib/
-│       ├── translations.ts        # dictionnaire FR/EN complet
-│       ├── i18n.tsx               # LanguageProvider (localStorage)
-│       └── cart.tsx               # CartProvider (panier de devis, localStorage)
+├── CHOIX-TECHNIQUES.md            # réflexion d'ingénieur (migrations, arbitraires, production)
+├── .env.example                   # variables d'environnement documentées
+├── data/quotes.json               # fallback dev (gitignore)
+└── src/
+    ├── app/
+    │   ├── layout.tsx  template.tsx
+    │   ├── page.tsx               # accueil
+    │   ├── produits/  devis/  a-propos/  contact/
+    │   ├── admin/                 # AdminView (connexion + tableau) + Dashboard
+    │   └── api/{quotes,admin}     # POST/GET devis, login/logout
+    ├── components/                # Header (compteur, FR/EN, barre de lecture), ProductCard,
+    │                              # ProductVisual, Reveal, DemoNotice, AddToQuoteButton…
+    ├── data/                      # products.ts (catalogue), demoQuotes.ts (jeu fictif)
+    └── lib/                       # translations.ts (FR/EN), i18n.tsx, cart.tsx,
+                                   # quoteStore.ts (Redis/JSON), adminAuth.ts
 ```
 
-**Clés localStorage** : `raphia-mada-lang` (langue) · `raphia-mada-quote-cart` (panier de devis).
+## ⚠️ Mentions démo
 
-## 🧪 Données de démonstration
-
-8 produits fictifs : Panier d'Ambositra, Sac Toamasina, Chapeau Morondava, Tapis Analamanga, Set de table Ranomafana, Panier Vazimba, Sac Mahajanga, Chapeau Vohitsara — chacun avec description FR/EN, dimensions, matières, MOQ, délai et 3 paliers de prix dégressifs (€/pièce).
-
-## ⚠️ Mentions
-
-- Coordonnées (mail, téléphone, adresse, témoignages) **fictives**, à usage démo
-- **`/admin` est volontairement sans mot de passe** (bandeau visible) — ne pas déployer tel quel en production
-- Le formulaire de Contact est une **simulation** (aucun envoi réseau)
+- Coordonnées, produits, témoignages et sociétés **fictifs**
+- Bandeau « n'entrez pas de vraies données » sur les formulaires + purge automatique à 30 jours
+- `/admin` est protégé par mot de passe **si configuré** — sinon mode démo (données fictives) : non exposées de données réelles en public
 
 ## 👤 Auteur
 
-Site de démonstration — **Raphia Mada** · git « Anjara » · build vérifié avec Next.js 14.2.15.
+**Anjara Fahasoavan** — [zoanjarafahasoavana@gmail.com](mailto:zoanjarafahasoavana@gmail.com) · [github.com/Fahasoavan](https://github.com/Fahasoavan)

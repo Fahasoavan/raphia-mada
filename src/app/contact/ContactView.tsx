@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import Reveal from "@/components/Reveal";
+import DemoNotice from "@/components/DemoNotice";
 
 export default function ContactView() {
   const { t } = useI18n();
@@ -35,7 +36,8 @@ export default function ContactView() {
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-      <h1 className="section-title">{t.contactPage.title}</h1>
+      <DemoNotice />
+      <h1 className="section-title mt-4">{t.contactPage.title}</h1>
       <p className="mt-2 max-w-2xl text-ink/70">{t.contactPage.subtitle}</p>
 
       <div className="mt-8 grid gap-8 md:grid-cols-2">

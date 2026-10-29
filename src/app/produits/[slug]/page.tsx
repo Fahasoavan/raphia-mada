@@ -4,7 +4,7 @@ import { getProduct, products } from "@/data/products";
 import ProductDetailPage from "./ProductDetailPage";
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export function generateStaticParams() {
@@ -12,7 +12,8 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const product = getProduct(params.slug);
+  const { slug } = await params;
+  const product = getProduct(slug);
   if (!product) return { title: "Produit introuvable" };
   return {
     title: `${product.name.fr} — Fiche produit`,
@@ -20,8 +21,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function Page({ params }: Props) {
-  const product = getProduct(params.slug);
+export default async function Page({ params }: Props) {
+  const { slug } = await params;
+  const product = getProduct(slug);
   if (!product) notFound();
-  return <ProductDetailPage slug={params.slug} />;
+  return <ProductDetailPage slug={slug} />;
 }

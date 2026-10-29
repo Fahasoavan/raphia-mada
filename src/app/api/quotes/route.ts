@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
 import { getProduct } from "@/data/products";
+import { demoQuotes } from "@/data/demoQuotes";
+import { adminPassword, isAdmin } from "@/lib/adminAuth";
+import { listQuotes, purgeOldQuotes, saveQuote, storageMode } from "@/lib/quoteStore";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -20,32 +21,15 @@ export interface QuoteRecord {
   totalQty: number;
 }
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const DATA_FILE = path.join(DATA_DIR, "quotes.json");
+/* ---------- Rétention des demandes (données de démo) ---------- */
 
-async function readQuotes(): Promise<QuoteRecord[]> {
-  try {
-    await fs.access(DATA_DIR);
-  } catch {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-  }
-  try {
-    const raw = (await fs.readFile(DATA_FILE, "utf8")).replace(/^\uFEFF/, "").trim();
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as QuoteRecord[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-async function writeQuotes(quotes: QuoteRecord[]) {
-  await fs.mkdir(DATA_DIR, { recursive: true });
-  await fs.writeFile(DATA_FILE, JSON.stringify(quotes, null, 2), "utf8");
-}
+const RETENTION_DAYS = Number(process.env.QUOTE_RETENTION_DAYS ?? 30);
 
 function fieldError(field: string, message: string) {
   return NextResponse.json({ error: "validation", field, message }, { status: 400 });
 }
+
+/* ---------- POST : dépôt public d'une demande ---------- */
 
 export async function POST(req: NextRequest) {
   let body: unknown;
@@ -93,11 +77,10 @@ export async function POST(req: NextRequest) {
   }
   if (items.length === 0) return fieldError("items", "items_empty");
 
-  const quotes = await readQuotes();
-
-  // Référence : DEV-<année>-<compteur sur 4 chiffres>
+  // Référence : DEV-<année>-<compteur>, atomique côté Redis (cardinalité du sorted set)
   const year = new Date().getFullYear();
-  const count = quotes.filter((q) => q.reference.startsWith(`DEV-${year}-`)).length;
+  const existing = await listQuotes().catch(() => []);
+  const count = existing.filter((q) => q.reference.startsWith(`DEV-${year}-`)).length;
   const reference = `DEV-${year}-${String(count + 1).padStart(4, "0")}`;
 
   const record: QuoteRecord = {
@@ -114,13 +97,38 @@ export async function POST(req: NextRequest) {
     totalQty: items.reduce((s, it) => s + it.qty, 0),
   };
 
-  quotes.push(record);
-  await writeQuotes(quotes);
+  try {
+    await saveQuote(record);
+    // Rétention : purge régulière des demandes anciennes (données de démo)
+    await purgeOldQuotes(RETENTION_DAYS).catch(() => 0);
+  } catch {
+    return NextResponse.json(
+      { error: "storage", message: "Impossible d'enregistrer la demande pour le moment." },
+      { status: 503 }
+    );
+  }
 
   return NextResponse.json({ ok: true, reference, quote: record }, { status: 201 });
 }
 
-export async function GET() {
-  const quotes = await readQuotes();
-  return NextResponse.json({ quotes }, { status: 200 });
+/* ---------- GET : données des demandes (réservées à l'admin) ---------- */
+
+export async function GET(req: NextRequest) {
+  const pw = adminPassword();
+
+  // Mot de passe configuré → seul l'admin authentifié voit les vraies demandes
+  if (pw) {
+    if (!isAdmin(req)) {
+      return NextResponse.json({ error: "unauthorized", requiresAuth: true, source: storageMode }, { status: 401 });
+    }
+    const quotes = await listQuotes().catch(() => []);
+    return NextResponse.json({ quotes, source: storageMode, protected: true }, { status: 200 });
+  }
+
+  // Aucun mot de passe configuré (déploiement public) → mode démo :
+  // données 100 % fictives, jamais les demandes réelles.
+  return NextResponse.json(
+    { quotes: demoQuotes, source: storageMode, demo: true },
+    { status: 200 }
+  );
 }
