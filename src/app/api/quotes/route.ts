@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getProduct } from "@/data/products";
 import { demoQuotes } from "@/data/demoQuotes";
 import { adminPassword, isAdmin } from "@/lib/adminAuth";
-import { listQuotes, purgeOldQuotes, saveQuote, storageMode } from "@/lib/quoteStore";
+import { listQuotes, purgeOldQuotes, saveQuote, storageMode, nextReference } from "@/lib/quoteStore";
+import { rateLimit, ipOf, TOO_MANY } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,10 +32,46 @@ function fieldError(field: string, message: string) {
 
 /* ---------- POST : dépôt public d'une demande ---------- */
 
+/* Limites anti-abus */
+
+const MAX_TEXT_LENGTHS: Record<string, number> = {
+  name: 120,
+  company: 120,
+  email: 254,
+  country: 80,
+  phone: 30,
+  targetDate: 120,
+  message: 2000,
+};
+const MAX_ITEMS = 50;
+const MAX_QTY = 1_000_000;
+const POST_LIMIT = 5; // /minute/IP
+const POST_WINDOW_MS = 60 * 1000;
+const MAX_BODY_BYTES = 64 * 1024;
+
 export async function POST(req: NextRequest) {
+  // 1) Limiteur de débit par IP (Redis en prod, mémoire en dev)
+  const rl = await rateLimit("quote-post", ipOf(req), POST_LIMIT, POST_WINDOW_MS);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: TOO_MANY, retryAfterSec: rl.retryAfterSec },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } }
+    );
+  }
+
+  // 2) Garde-fou taille brute du corps (pas de payload géant avant parse)
+  const bodyLength = Number(req.headers.get("content-length") ?? 0);
+  if (bodyLength > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "payload_too_large", maxBytes: MAX_BODY_BYTES }, { status: 413 });
+  }
+  const rawBody = await req.text();
+  if (rawBody.length > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "payload_too_large", maxBytes: MAX_BODY_BYTES }, { status: 413 });
+  }
+
   let body: unknown;
   try {
-    body = await req.json();
+    body = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ error: "invalid-json" }, { status: 400 });
   }
@@ -48,6 +85,15 @@ export async function POST(req: NextRequest) {
   const targetDate = String(data.targetDate ?? "").trim();
   const message = String(data.message ?? "").trim();
 
+  // 3) Limites par champ
+  if (name.length > MAX_TEXT_LENGTHS.name) return fieldError("name", "too_long");
+  if (company.length > MAX_TEXT_LENGTHS.company) return fieldError("company", "too_long");
+  if (email.length > MAX_TEXT_LENGTHS.email) return fieldError("email", "too_long");
+  if (country.length > MAX_TEXT_LENGTHS.country) return fieldError("country", "too_long");
+  if (phone.length > MAX_TEXT_LENGTHS.phone) return fieldError("phone", "too_long");
+  if (targetDate.length > MAX_TEXT_LENGTHS.targetDate) return fieldError("targetDate", "too_long");
+  if (message.length > MAX_TEXT_LENGTHS.message) return fieldError("message", "too_long");
+
   if (!name) return fieldError("name", "name_required");
   if (!company) return fieldError("company", "company_required");
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
@@ -58,13 +104,14 @@ export async function POST(req: NextRequest) {
 
   // Validation des articles
   const rawItems = Array.isArray(data.items) ? data.items : [];
+  if (rawItems.length > MAX_ITEMS) return fieldError("items", "too_many");
   const items: QuoteRecord["items"] = [];
   for (const it of rawItems) {
     const obj = (it ?? {}) as Record<string, unknown>;
     const slug = String(obj.slug ?? "");
     const qty = Number(obj.qty);
     const product = getProduct(slug);
-    if (!product || !Number.isFinite(qty) || qty <= 0) {
+    if (!product || !Number.isFinite(qty) || qty <= 0 || qty > MAX_QTY) {
       return fieldError("items", "items_invalid");
     }
     items.push({
@@ -77,11 +124,9 @@ export async function POST(req: NextRequest) {
   }
   if (items.length === 0) return fieldError("items", "items_empty");
 
-  // Référence : DEV-<année>-<compteur>, atomique côté Redis (cardinalité du sorted set)
-  const year = new Date().getFullYear();
-  const existing = await listQuotes().catch(() => []);
-  const count = existing.filter((q) => q.reference.startsWith(`DEV-${year}-`)).length;
-  const reference = `DEV-${year}-${String(count + 1).padStart(4, "0")}`;
+  // Référence : INCR atomique Redis par année (indépendante de la purge,
+  // impossible que deux envois simultanés partagent le même numéro)
+  const reference = await nextReference();
 
   const record: QuoteRecord = {
     reference,

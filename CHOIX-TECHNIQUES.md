@@ -44,8 +44,11 @@ Deux états partagés seulement : la langue et le panier de devis. React Context
 | Risque | Réponse |
 |---|---|
 | Le filesystem n'est pas persistant | Base Redis (voir §1) |
-| `/admin` public | `ADMIN_PASSWORD` (variable d'env) → cookie **httpOnly** + `sameSite=lax` + `secure` en prod, 12 h. Sans variable : **mode démo**, le `GET /api/quotes` sert un jeu de données fictives, jamais les demandes réelles |
+| `/admin` public | `ADMIN_PASSWORD` (**12 caractères minimum**, fail closed → sinon mode démo) → cookie **httpOnly** + `sameSite=lax` + `secure` en prod, 12 h. Jeton de session **signé HMAC** (`{ exp }.sig`, secret dérivé du mot de passe + `ADMIN_SESSION_SECRET`) : un cookie volé expire automatiquement, et changer le mot de passe invalide toutes les sessions |
+| Anniversaire de mot de passe / énumération | Login limité à **5 tentatives / 5 min / IP** (429 + `Retry-After`) |
 | Visiteurs qui saisissent de vraies données | Bandeau visible sur tous les formulaires + **purge automatique à 30 jours** (`ZREMRANGEBYSCORE`, configurable via `QUOTE_RETENTION_DAYS`) |
+| Saturation de la base (SPAM) | Rate limiting sur `POST /api/quotes` (**5 req/min/IP**, `INCR`+`EXPIRE` Redis partagé entre instances), plafond de 64 Ko par corps, limites par champ (message ≤ 2 000 caractères, ≤ 50 lignes, ≤ 1 M pièces) |
+| Références de devis dupliquées | Compteur **atomique Redis `INCR`** par année (dev-only : fallback fichier, mono-utilisateur) ; la purge n'affecte plus la numérotation |
 | Requêtes mal formées | Double validation (client + serveur), réponses 400 typées par champ |
 
 ## 6. Next.js 16 vs 14 (migration effectuée)

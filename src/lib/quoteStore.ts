@@ -22,8 +22,7 @@ const DATA_DIR = path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "quotes.json");
 const KEY = "raphia:quotes";
 
-async function redisCommand(args: (string | number)[]): Promise<unknown> {
-  const res = await fetch(REDIS_URL as string, {
+async function redisCommand(args: (string | number)[]): Promise<unknown> {  const res = await fetch(REDIS_URL as string, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${REDIS_TOKEN as string}`,
@@ -36,6 +35,30 @@ async function redisCommand(args: (string | number)[]): Promise<unknown> {
   const json = (await res.json()) as { result?: unknown; error?: string };
   if (json.error) throw new Error(`Upstash: ${json.error}`);
   return json.result;
+}
+
+/** Exécute une commande Redis (utilisé aussi pour le rate limiting). */
+export function redisCommandPublic(args: (string | number)[]): Promise<unknown> {
+  return redisCommand(args);
+}
+
+/** Compteur atomique de références : INCR par année, indépendant de la purge. */
+export async function nextReference(): Promise<string> {
+  const year = new Date().getFullYear();
+  if (storageMode === "redis") {
+    try {
+      const value = (await redisCommand(["INCR", `raphia:refs:${year}`])) as number;
+      if (Number.isFinite(value)) {
+        return `DEV-${year}-${String(value).padStart(4, "0")}`;
+      }
+    } catch {
+      /* réseau Redis indisponible : on retombe sur le compteur local ci-dessous */
+    }
+  }
+  // Fallback dev (fichier) : éventail de collisions possible, acceptable en mono-utilisateur.
+  const quotes = await readLocal();
+  const count = quotes.filter((q) => q.reference.startsWith(`DEV-${year}-`)).length;
+  return `DEV-${year}-${String(count + 1).padStart(4, "0")}`;
 }
 
 export async function saveQuote(quote: QuoteRecord): Promise<void> {
